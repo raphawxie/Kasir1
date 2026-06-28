@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Kasir — Roti Bakar Bandung (Multi-Device)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --c-cocoa:#4A2C20;
+  --c-cocoa-dark:#2F1B13;
+  --c-cream:#FBF3E6;
+  --c-paper:#FFFDF8;
+  --c-ink:#2B211B;
+  --c-ink-soft:#7A6A5C;
+  --c-line:#E7D9C3;
+
+  --c-strawberry:#E2536B;
+  --c-nanas:#E8B23D;
+  --c-kacang:#B27A45;
+  --c-coklat:#4A2C20;
+  --c-blueberry:#5A5FA6;
+  --c-kaya:#6E8B3D;
+  --c-keju:#F0C24A;
+  --c-crunchy:#6B3A22;
+  --c-tiramisu:#A9784A;
+  --c-greentea:#6E8B3D;
+  --c-campur:#8C7A66;
+
+  --c-success:#3F7D4E;
+  --c-danger:#B23B3B;
+
+  --radius:14px;
+  --shadow:0 10px 28px rgba(43,33,27,.14);
+  --shadow-sm:0 3px 10px rgba(43,33,27,.10);
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',system-ui,-apple-system,Segoe UI,sans-serif;
+  background:var(--c-cream);
+  color:var(--c-ink);
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit; touch-action: manipulation;}
+input,select{font-family:inherit; font-size:16px; /* Cegah auto-zoom di iPhone */}
+:focus-visible{outline:2.5px solid var(--c-blueberry); outline-offset:2px;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important;}
+}
+
+/* ---------- Layout shell ---------- */
+.app{max-width:1280px;margin:0 auto;padding:12px 12px 60px;}
+
+.session-banner{
+  background:#D4EDDA;border:1px solid #C3E6CB;color:#155724;
+  border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:14px;
+  display:flex;justify-content:space-between;gap:10px;align-items:center;
+}
+.session-banner button{background:none;border:none;color:#155724;font-weight:700;cursor:pointer;font-size:15px;line-height:1;}
+
+/* ---------- Header ---------- */
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+  background:var(--c-cocoa);color:var(--c-cream);
+  border-radius:var(--radius);padding:16px 22px;box-shadow:var(--shadow);
+}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand-mark{flex-shrink:0;}
+.brand-text h1{
+  font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0;letter-spacing:.2px;
+}
+.brand-text p{margin:2px 0 0;font-size:12.5px;color:#D9C4AE;}
+.clock{text-align:right;}
+.clock-day{font-weight:700;font-size:14px;}
+.clock-date{font-size:12.5px;color:#D9C4AE;}
+.clock-time{
+  font-family:'Inter',monospace;font-variant-numeric:tabular-nums;
+  font-size:19px;font-weight:700;letter-spacing:.5px;
+}
+
+/* ---------- Stats ---------- */
+.stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px;margin:16px 0;
+}
+.stat-card{
+  background:var(--c-paper);border:1px solid var(--c-line);border-radius:var(--radius);
+  padding:12px 14px;box-shadow:var(--shadow-sm);
+}
+.stat-card.highlight{background:var(--c-cocoa);border-color:var(--c-cocoa);}
+.stat-card.highlight .stat-label{color:#D9C4AE;}
+.stat-card.highlight .stat-value{color:var(--c-cream);}
+.stat-label{display:block;font-size:11px;color:var(--c-ink-soft);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+.stat-value{display:block;font-size:18px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums;}
+
+.bestseller-bar{
+  background:var(--c-paper);border:1px dashed var(--c-line);border-radius:10px;
+  padding:9px 16px;font-size:13px;color:var(--c-ink-soft);margin-bottom:16px;
+}
+.bestseller-bar strong{color:var(--c-ink);}
+
+/* ---------- Layout Dua Kolom (PC & Ponsel) ---------- */
+.layout{display:grid;grid-template-columns:1fr 400px;gap:18px;align-items:start;}
+@media (max-width:992px){
+  .layout{grid-template-columns:1fr;}
+  .stats{grid-template-columns:1fr 1fr;}
+}
+
+/* ---------- Menu panel ---------- */
+.menu-panel{
+  background:var(--c-paper);border:1px solid var(--c-line);border-radius:var(--radius);
+  padding:16px;box-shadow:var(--shadow-sm);
+}
+.menu-toolbar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+#searchInput{
+  flex:1;min-width:160px;padding:12px 14px;border:1px solid var(--c-line);border-radius:10px;
+  background:var(--c-cream);color:var(--c-ink);
+}
+#searchInput::placeholder{color:var(--c-ink-soft);}
+.btn-ghost{
+  background:transparent;border:1px solid var(--c-line);color:var(--c-cocoa-dark);
+  border-radius:10px;padding:12px 14px;font-weight:600;cursor:pointer;font-size:13px;
+}
+.btn-ghost:hover{background:var(--c-cream);}
+.btn-primary{
+  background:var(--c-cocoa);color:var(--c-cream);border:none;border-radius:10px;
+  padding:14px 18px;font-weight:700;cursor:pointer;font-size:14px;
+}
+.btn-primary:hover{background:var(--c-cocoa-dark);}
+.btn-primary:disabled{background:#C9BBA9;cursor:not-allowed;}
+
+.category-tabs{
+  display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:6px;
+  border-bottom:1px solid var(--c-line);
+  -webkit-overflow-scrolling: touch; /* Scroll halus di iOS */
+}
+.category-tabs::-webkit-scrollbar{height:6px;}
+.cat-chip{
+  flex-shrink:0;display:flex;align-items:center;gap:6px;
+  padding:10px 16px;border-radius:999px;border:1px solid var(--c-line);
+  background:var(--c-cream);color:var(--c-ink);font-size:13px;font-weight:600;
+  cursor:pointer;white-space:nowrap;
+}
+.cat-chip .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.cat-chip.active{background:var(--c-cocoa);color:var(--c-cream);border-color:var(--c-cocoa);}
+
+.menu-section-title{
+  font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--c-ink-soft);margin:16px 2px 8px;display:flex;align-items:center;gap:7px;
+}
+.menu-section-title .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+.menu-section-title:first-child{margin-top:6px;}
+
+.menu-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;
+}
+.item-card{
+  position:relative;text-align:left;background:var(--c-cream);border:1px solid var(--c-line);
+  border-radius:11px;padding:14px 12px;cursor:pointer;transition:transform .12s, box-shadow .12s;
+  min-height: 85px; /* Memastikan area ketuk di ponsel nyaman */
+}
+.item-card:hover{box-shadow:var(--shadow-sm);transform:translateY(-1px);}
+.item-card:active{transform:translateY(0); background:#f5ebd7;}
+.item-name{display:block;font-size:13.5px;font-weight:700;line-height:1.25;margin-bottom:6px;}
+.item-price{display:block;font-size:13px;color:var(--c-cocoa-dark);font-weight:700;font-variant-numeric:tabular-nums;}
+.item-qty-badge{
+  position:absolute;top:-6px;right:-6px;background:var(--c-strawberry);color:#fff;
+  font-size:11.5px;font-weight:800;border-radius:999px;min-width:22px;height:22px;
+  display:flex;align-items:center;justify-content:center;padding:0 5px;box-shadow:var(--shadow-sm);
+}
+.empty-state{color:var(--c-ink-soft);font-size:13.5px;padding:18px 4px;text-align:center;}
+
+/* ---------- Order ticket panel ---------- */
+.order-panel{display:flex;flex-direction:column;gap:14px;}
+
+.ticket{
+  background:var(--c-paper);border-radius:0 0 var(--radius) var(--radius);
+  box-shadow:var(--shadow);margin-top:12px;
+  position:sticky;top:12px;
+}
+.ticket-zigzag{
+  height:13px;
+  background:
+    linear-gradient(135deg, var(--c-cream) 50%, transparent 50%) 0 0/13px 13px,
+    linear-gradient(45deg, var(--c-cream) 50%, transparent 50%) 0 0/13px 13px;
+  background-color:var(--c-paper);
+}
+.ticket-body{padding:6px 18px 18px;}
+.ticket-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+.ticket-header h2{font-family:'Fraunces',serif;font-size:17px;margin:0;font-weight:600;}
+.ticket-count{font-size:12px;color:var(--c-ink-soft);font-weight:600;}
+
+.cart-list{display:flex;flex-direction:column;gap:10px;max-height:320px;overflow-y:auto;margin-bottom:6px;}
+.cart-row{
+  display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;
+  gap:4px 8px;padding-bottom:12px;border-bottom:1px dashed var(--c-line);
+}
+.cart-row-name{font-size:13.5px;font-weight:700;grid-column:1/2;}
+.cart-row-subtotal{font-size:13.5px;font-weight:700;text-align:right;grid-column:2/3;grid-row:1/2;font-variant-numeric:tabular-nums;}
+.cart-row-price{font-size:12px;color:var(--c-ink-soft);grid-column:1/2;}
+.cart-row-controls{display:flex;align-items:center;gap:10px;grid-column:2/3;grid-row:2/3;justify-content:flex-end;}
+.qty-btn{
+  width:32px;height:32px;border-radius:8px;border:1px solid var(--c-line);background:var(--c-cream);
+  cursor:pointer;font-size:16px;font-weight:700;color:var(--c-ink);
+  display:flex;align-items:center;justify-content:center;
+}
+.qty-btn:active{background:#eedcb9;}
+.qty-value{min-width:24px;text-align:center;font-weight:700;font-size:14px;}
+.remove-btn{
+  width:32px;height:32px;border-radius:8px;border:1px solid transparent;background:transparent;
+  color:var(--c-danger);font-size:20px;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center;
+}
+
+.ticket-total-row{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:12px 0;border-top:2px solid var(--c-ink);margin-top:4px;
+}
+.ticket-total-row span:first-child{font-weight:700;font-size:14px;}
+.ticket-total-row span:last-child{font-weight:800;font-size:22px;font-variant-numeric:tabular-nums;}
+
+.field-label{display:block;font-size:12px;font-weight:700;color:var(--c-ink-soft);text-transform:uppercase;letter-spacing:.3px;margin:10px 0 5px;}
+#paymentMethod,#cashInput,#noteInput{
+  width:100%;padding:12px;border:1px solid var(--c-line);border-radius:9px;
+  background:var(--c-cream);color:var(--c-ink);
+}
+.quick-cash{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.qc-btn{
+  border:1px solid var(--c-line);background:var(--c-cream);border-radius:8px;
+  padding:10px 14px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--c-cocoa-dark);
+}
+.qc-btn:hover, .qc-btn:active{background:#F0E2CB;}
+
+.change-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:12px;padding-top:10px;border-top:1px dashed var(--c-line);}
+.change-row span:first-child{font-size:13px;font-weight:700;}
+#changeAmount{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--c-success);}
+#changeAmount.insufficient{color:var(--c-danger);}
+
+.noncash-info{
+  margin-top:10px;background:#EEF1E3;border:1px solid var(--c-kaya);border-radius:9px;
+  padding:9px 12px;font-size:12.5px;color:#3F5226;
+}
+
+.ticket-actions{display:flex;gap:8px;margin-top:16px;}
+.ticket-actions .btn-primary{flex:2;}
+.ticket-actions .btn-ghost{flex:1;}
+
+/* ---------- History ---------- */
+.history-block{
+  background:var(--c-paper);border:1px solid var(--c-line);border-radius:var(--radius);
+  padding:6px 16px;box-shadow:var(--shadow-sm);
+}
+.history-toggle{
+  width:100%;background:none;border:none;padding:14px 0;font-weight:700;font-size:13.5px;
+  cursor:pointer;color:var(--c-ink);text-align:left;display:flex;justify-content:space-between;
+}
+.history-toggle span{color:var(--c-ink-soft);font-weight:600;}
+.history-list{max-height:240px;overflow-y:auto;padding-bottom:10px;}
+.history-row{
+  display:flex;justify-content:space-between;gap:8px;padding:12px 4px;border-top:1px dashed var(--c-line);
+  cursor:pointer;font-size:12.5px;
+}
+.history-row:active{background:var(--c-cream);}
+.history-row-left{display:flex;flex-direction:column;}
+.history-row-time{font-weight:700;}
+.history-row-items{color:var(--c-ink-soft);}
+.history-row-right{display:flex;flex-direction:column;align-items:flex-end;}
+.history-row-total{font-weight:800;font-variant-numeric:tabular-nums;}
+.history-badge{
+  font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--c-ink-soft);
+}
+
+/* ---------- Receipt overlay ---------- */
+.receipt-overlay{
+  position:fixed;inset:0;background:rgba(43,33,27,.55);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;padding:20px;z-index:50;
+}
+.receipt-paper{
+  width:310px;background:var(--c-paper);border-radius:6px;padding:22px 20px;
+  box-shadow:var(--shadow);font-family:'Inter',monospace;font-size:12.5px;color:var(--c-ink);
+  max-height:75vh;overflow-y:auto;
+}
+.receipt-shop-name{font-family:'Fraunces',serif;font-weight:700;font-size:16px;text-align:center;}
+.receipt-meta{text-align:center;color:var(--c-ink-soft);font-size:11px;margin-top:3px;}
+.receipt-divider{border-top:1px dashed var(--c-ink-soft);margin:10px 0;}
+.receipt-line{display:flex;justify-content:space-between;gap:8px;padding:3px 0;}
+.receipt-item-name{flex:1;}
+.receipt-total{font-weight:800;font-size:14px;}
+.receipt-note{margin-top:8px;font-style:italic;color:var(--c-ink-soft);}
+.receipt-footer{text-align:center;color:var(--c-ink-soft);font-size:11.5px;margin-top:4px;}
+.receipt-actions{display:flex;gap:10px; width: 310px;}
+.receipt-actions button{flex: 1;}
+
+/* ---------- Confirm modal & toast ---------- */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(43,33,27,.55);display:flex;
+  align-items:center;justify-content:center;padding:20px;z-index:60;
+}
+.modal-box{
+  background:var(--c-paper);border-radius:14px;padding:22px;max-width:340px;
+  box-shadow:var(--shadow);
+}
+.modal-box p{margin:0 0 18px;font-size:14px;line-height:1.5;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+
+.toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  background:var(--c-ink);color:#fff;padding:12px 20px;border-radius:9px;font-size:13.5px;
+  box-shadow:var(--shadow);z-index:70;max-width:90vw;text-align:center;
+}
+.toast.error{background:var(--c-danger);}
+.toast.success{background:var(--c-success);}
+
+.loading-overlay{
+  position:fixed;inset:0;background:var(--c-cream);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;z-index:90;
+}
+.spinner{
+  width:34px;height:34px;border-radius:50%;border:3px solid var(--c-line);
+  border-top-color:var(--c-cocoa);animation:spin 0.8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-overlay p{color:var(--c-ink-soft);font-size:13px;}
+
+[hidden]{display:none !important;}
+
+/* ---------- Print ---------- */
+@media print{
+  .app, .modal-overlay, .toast, .loading-overlay, .no-print{display:none !important;}
+  .receipt-overlay{position:static !important;background:#fff !important;padding:0 !important;}
+  .receipt-paper{box-shadow:none !important;margin:0 auto;max-height:none;overflow:visible;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="session-banner" id="sessionBanner">
+    <span>✔️ <strong>Database Cloud Browser Aktif:</strong> Aplikasi siap dipakai di PC maupun Ponsel secara responsif.</span>
+    <button id="closeSessionBanner" aria-label="Tutup">×</button>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="14" r="11" fill="#F0C24A"/>
+        <circle cx="20" cy="22" r="11" fill="#E2536B" opacity="0.92"/>
+        <circle cx="20" cy="30" r="11" fill="#4A2C20" opacity="0.95"/>
+      </svg>
+      <div class="brand-text">
+        <h1>Kasir Roti Bakar Bandung</h1>
+        <p>Aplikasi Kasir Toko Responsif Multi-Perangkat</p>
+      </div>
+    </div>
+    <div class="clock">
+      <div class="clock-day" id="clockDay">—</div>
+      <div class="clock-date" id="clockDate">—</div>
+      <div class="clock-time" id="clockTime">--:--:--</div>
+    </div>
+  </header>
+
+  <section class="stats">
+    <div class="stat-card">
+      <span class="stat-label">Pesanan Hari Ini</span>
+      <span class="stat-value" id="statOrders">0</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Omset Hari Ini</span>
+      <span class="stat-value" id="statRevenueToday">Rp. 0</span>
+    </div>
+    <div class="stat-card highlight">
+      <span class="stat-label">Total Omset Toko</span>
+      <span class="stat-value" id="statRevenueAll">Rp. 0</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Rata-rata</span>
+      <span class="stat-value" id="statAvg">Rp. 0</span>
+    </div>
+  </section>
+
+  <div class="bestseller-bar" id="bestsellerBar">Menu terlaris hari ini: <strong>belum ada transaksi</strong></div>
+
+  <main class="layout">
+
+    <section class="menu-panel">
+      <div class="menu-toolbar">
+        <input type="search" id="searchInput" placeholder="Cari menu... (tiramisu, keju, coklat)" />
+        <button id="btnEndDay" class="btn-ghost">Tutup Buku Harian</button>
+      </div>
+      <nav class="category-tabs" id="categoryTabs"></nav>
+      <div class="menu-grid" id="menuGrid"></div>
+      <p class="empty-state" id="menuEmpty" hidden>Menu tidak ditemukan. Coba kata kunci lain.</p>
+    </section>
+
+    <aside class="order-panel">
+      <div class="ticket">
+        <div class="ticket-zigzag"></div>
+        <div class="ticket-body">
+          <div class="ticket-header">
+            <h2>Keranjang</h2>
+            <span class="ticket-count" id="cartCount">0 item</span>
+          </div>
+
+          <div class="cart-list" id="cartList">
+            <p class="empty-state" id="cartEmpty">Belum ada pesanan.</p>
+          </div>
+
+          <div class="ticket-total-row">
+            <span>Total Tagihan</span>
+            <span id="cartTotal">Rp. 0</span>
+          </div>
+
+          <label class="field-label" for="paymentMethod">Metode Pembayaran</label>
+          <select id="paymentMethod">
+            <option value="tunai">Tunai / Cash</option>
+            <option value="qris">QRIS</option>
+            <option value="transfer">Transfer / Debit</option>
+          </select>
+
+          <div id="cashFields">
+            <label class="field-label" for="cashInput">Uang Tunai Diterima</label>
+            <input type="number" id="cashInput" inputmode="numeric" min="0" placeholder="0" />
+            <div class="quick-cash" id="quickCash"></div>
+            <div class="change-row">
+              <span>Uang Kembali</span>
+              <span id="changeAmount">Rp. 0</span>
+            </div>
+          </div>
+
+          <div class="noncash-info" id="noncashInfo" hidden>Pastikan dana masuk ke rekening/E-Wallet sebelum mencetak struk.</div>
+
+          <label class="field-label" for="noteInput">Catatan Pesanan</label>
+          <input type="text" id="noteInput" placeholder="contoh: ekstra susu, agak gosong" />
+
+          <div class="ticket-actions">
+            <button id="btnClearCart" class="btn-ghost">Reset</button>
+            <button id="btnCheckout" class="btn-primary" disabled>Bayar &amp; Cetak</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="history-block">
+        <button id="btnToggleHistory" class="history-toggle">
+          <span>Riwayat Hari Ini</span>
+          <span id="historyCount">(0)</span>
+        </button>
+        <div class="history-list" id="historyList" hidden>
+          <p class="empty-state" id="historyEmpty">Belum ada transaksi.</p>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+</div>
+
+<div class="receipt-overlay" id="receiptOverlay" hidden>
+  <div class="receipt-paper" id="receiptPaper"></div>
+  <div class="receipt-actions no-print">
+    <button id="btnPrintReceipt" class="btn-primary">Cetak</button>
+    <button id="btnCloseReceipt" class="btn-ghost">Tutup</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirmOverlay" hidden>
+  <div class="modal-box">
+    <p id="confirmMessage"></p>
+    <div class="modal-actions">
+      <button id="confirmCancel" class="btn-ghost">Batal</button>
+      <button id="confirmOk" class="btn-primary">Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p>Sinkronisasi sistem...</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =================== DATA MENU =================== */
+  var MENU = [
+    { id:'strawberry', label:'Strawberry', color:'var(-
